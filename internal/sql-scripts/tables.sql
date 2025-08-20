@@ -54,3 +54,52 @@ CREATE TABLE IF NOT EXISTS items (
   brand TEXT NOT NULL,
   status INT NOT NULL
 );
+
+
+CREATE OR REPLACE FUNCTION insert_general(
+    p_order_uid TEXT,
+    p_track_number TEXT,
+    p_entry TEXT,
+    p_locale TEXT,
+    p_internal_signature TEXT,
+    p_customer_id TEXT,
+    p_delivery_service TEXT,
+    p_shardkey TEXT,
+    p_sm_id INTEGER,
+    p_date_created TIMESTAMP,
+    p_oof_shard TEXT
+)
+RETURNS VOID AS $$
+BEGIN
+    INSERT INTO general (
+        order_uid,
+        track_number,
+        entry,
+        locale,
+        internal_signature,
+        customer_id,
+        delivery_service,
+        shardkey,
+        sm_id,
+        date_created,
+        oof_shard
+    )
+    VALUES (
+        p_order_uid,
+        p_track_number,
+        p_entry,
+        p_locale,
+        p_internal_signature,
+        p_customer_id,
+        p_delivery_service,
+        p_shardkey,
+        p_sm_id,
+        p_date_created,
+        p_oof_shard
+    );
+EXCEPTION
+    WHEN unique_violation THEN
+        RAISE EXCEPTION 'Запись с order_uid "%" или track_number "%" уже существует.',
+            p_order_uid, p_track_number;
+END;
+$$ LANGUAGE plpgsql;
