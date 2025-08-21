@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Поиск заказа</title>
+  <style>
+    body { font-family: sans-serif; margin: 20px; }
+    input, button { padding: 5px; margin: 5px 0; }
+    pre { background: #f5f5f5; padding: 10px; border-radius: 5px; }
+  </style>
+</head>
+<body>
+  <h2>Поиск заказа</h2>
+  <label for="orderId">ID заказа:</label><br>
+  <input type="text" id="orderId" placeholder="Введите order_uid">
+  <button onclick="getOrder()">Получить</button>
+
+  <h3>Результат:</h3>
+  <pre id="result">Пусто</pre>
+
+  <script>
+    async function getOrder() {
+      const orderId = document.getElementById('orderId').value;
+      if (!orderId) {
+        alert("Введите order_uid");
+        return;
+      }
+
+      try {
+        const response = await fetch(`http://localhost:8081/order?order_uid=${orderId}`);
+        if (!response.ok) {
+          document.getElementById('result').textContent = "Ошибка: " + response.status;
+          return;
+        }
+
+        const data = await response.json();
+        document.getElementById('result').textContent = JSON.stringify(data, null, 2);
+      } catch (err) {
+        document.getElementById('result').textContent = "Ошибка запроса: " + err;
+      }
+    }
+  </script>
+</body>
+</html>

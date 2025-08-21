@@ -125,8 +125,6 @@ func StartConsumer(reader *kafka.Reader, log *slog.Logger, conn *pgxpool.Pool, c
 			}
 		}
 		log.Info("вроде все")
-		// ЗАЛИВ В КЕШ
-
 	}
 }
 

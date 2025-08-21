@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/redis/go-redis/v9"
 )
 
 func InitConnDb(log *slog.Logger) (*pgxpool.Pool, context.Context) {
@@ -33,13 +32,4 @@ func InitConnDb(log *slog.Logger) (*pgxpool.Pool, context.Context) {
 	}
 
 	return conn, ctx
-}
-
-func InitConnCash() *redis.Client {
-	rdb := redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
-		Password: "", // no password set
-		DB:       0,  // use default DB
-	})
-	return rdb
 }

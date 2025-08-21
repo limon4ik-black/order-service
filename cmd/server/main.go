@@ -1,5 +1,6 @@
 package main
 
+// валидация и тесты остались
 import (
 	"net/http"
 	"order-service/internal/handlers"
@@ -9,17 +10,22 @@ import (
 )
 
 func main() {
-	//TODO: logger
+
 	log := logger.InitLoggerSlogger("local")
-	//TODO: init DB
-	connDB, ctx := storage.InitConnDb(log) // ctx вместо _
+
+	connDB, ctx := storage.InitConnDb(log)
 	defer connDB.Close()
-	//TODO: init kafka
+
 	consumer := kafka.InitKafkaConsumer("localhost:9092", "orders", "order-service-group")
 	defer consumer.Close()
+
 	rdb := storage.InitConnCash()
+	err := storage.ReloadCash(rdb, connDB, ctx)
+	if err != nil {
+		log.Error("failed to reload cash", "error", err)
+	}
+
 	go kafka.StartConsumer(consumer, log, connDB, ctx, rdb)
-	//TODO: init Redis
 
 	http.Handle("/order", &handlers.GetOrderHandler{
 		Conn: connDB,
@@ -28,7 +34,7 @@ func main() {
 		Rdb:  rdb,
 	})
 
-	err := http.ListenAndServe(":8081", nil)
+	err = http.ListenAndServe(":8081", nil)
 	if err != nil {
 		log.Error("failed to listen", "error", err)
 	}

@@ -34,6 +34,7 @@ func (h *GetOrderHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			panic(err) //
 		}
+		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Content-Type", "application/json")
 		w.Write([]byte(valOrder))
 		h.Log.Info("ОТРАБОТАЛО")
@@ -118,10 +119,21 @@ func (h *GetOrderHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 		//ITEMS
 		orderResponse.Items = []models.Item{item}
+
+		cashOrder, err := json.Marshal(orderResponse)
+		if err != nil {
+			h.Log.Error("failed trans struct to json", "error", err)
+			panic(err)
+		}
+
+		err = h.Rdb.Set(h.Ctx, order_uid, cashOrder, 0).Err()
+		if err != nil {
+			h.Log.Error("failed to insert into cash", "error", err)
+			panic(err)
+		}
+		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(orderResponse)
 		return
 	}
-
-	// маршал ддсж и отправка
 }
