@@ -6,6 +6,7 @@ import (
 	"log/slog"
 	"order-service/internal/models"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/redis/go-redis/v9"
 	"github.com/segmentio/kafka-go"
@@ -30,9 +31,14 @@ func StartConsumer(reader *kafka.Reader, log *slog.Logger, conn *pgxpool.Pool, c
 		}
 
 		orderStruct, err := ParseMessage(m, log)
-
 		if err != nil {
 			continue
+		}
+		var validate = validator.New()
+		// 🔍 Валидируем JSON → struct
+		if err := validate.Struct(orderStruct); err != nil {
+			log.Error("Validation failed", "error", err, "order_uid", orderStruct.Order_uid)
+			continue // ⚡ неправильные данные не пишем в Redis/Postgres
 		}
 
 		cashOrder, err := json.Marshal(orderStruct)
