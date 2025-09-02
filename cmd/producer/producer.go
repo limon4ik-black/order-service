@@ -71,7 +71,6 @@ func generateOrder() models.Order {
 		Oof_shard:          strconv.Itoa(rand.Intn(5)),
 	}
 
-	// генерим от 1 до 5 товаров
 	n := rand.Intn(5) + 1
 	for i := 0; i < n; i++ {
 		item := models.Item{

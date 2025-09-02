@@ -54,7 +54,8 @@ func (h *GetOrderHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		)
 		if err != nil {
 			h.Log.Error("failed to get order from db", "error", err) // обработать нормально типо 500
-			panic(err)
+			w.WriteHeader(http.StatusInternalServerError)
+			//panic(err)
 		}
 
 		//PAYMENT
@@ -73,7 +74,8 @@ func (h *GetOrderHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		)
 		if err != nil {
 			h.Log.Error("failed to get order from db", "error", err) // обработать нормально типо 500
-			panic(err)
+			w.WriteHeader(http.StatusInternalServerError)
+			//panic(err)
 		}
 
 		//ITEM NOT ITEMs
@@ -94,7 +96,8 @@ func (h *GetOrderHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		)
 		if err != nil {
 			h.Log.Error("failed to get order from db", "error", err) // обработать нормально типо 500
-			panic(err)
+			w.WriteHeader(http.StatusInternalServerError)
+			//panic(err)
 		}
 
 		//GENERAL
@@ -114,7 +117,8 @@ func (h *GetOrderHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		)
 		if err != nil {
 			h.Log.Error("failed to get order from db", "error", err) // обработать нормально типо 500
-			panic(err)
+			w.WriteHeader(http.StatusInternalServerError)
+			//panic(err)
 		}
 
 		//ITEMS
